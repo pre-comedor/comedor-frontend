@@ -73,7 +73,7 @@ export default function Menu({ items }) {
         <h2>Disfruta de nuestra seleccion del día.</h2>
         {SSRElements}
         <Link href="/menu/sell" passHref>
-          <a className="btn btn-success" style={{ width: "25vw" }}>Comprar</a>
+          <a className="btn btn-success" style={{ width: "25vw" }}>ComprarNuevo</a>
         </Link>
 
       </section>
