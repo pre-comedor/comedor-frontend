@@ -2,7 +2,8 @@ import { useState, useEffect, useContext } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import AuthContext from '../context/authContext';
-import Table from '../components/Table';
+// import Table from '../components/Table';
+import Table from 'react-bootstrap/Table'
 import Link from 'next/link';
 import PaginationControls from '../components/NavigationItems/PaginationControls';
 
@@ -115,7 +116,7 @@ export default function products() {
                     className="form-control"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    required  
+                    required
                   />
                 </div>
                 <div className="input-group">
@@ -173,36 +174,44 @@ export default function products() {
             />
           </div>
           <div className={`${classes.InLineBlock} ${classes.Table}`}>
-            <Table
-              headers={['ID', 'Nombre']}
-              items={items}
-              body={['_id', 'name']}
-            />
-          </div>
-          <div className={`${classes.InLineBlock} ${classes.actions}`}>
-            {items.map((el, i) => {
-              return (
-                <div key={el._id + i}>
-                  {/* Button to Delete Item */}
-                  <button
-                    type="button"
-                    className={'btn btn-danger'}
-                    onClick={(e) => removeItem(el._id, el.name)}
-                  >
-                    <BsFillTrashFill />
-                  </button>
-                  {/* Button to Modify Item */}
-                  <button
-                    type="button"
-                    className={'btn btn-info'}
-                    onClick={(e) => modifyItem(el)}
-                  >
-                    <BsGearFill />
-                  </button>
-                  <br />
-                </div>
-              );
-            })}
+            <Table responsive="lg" striped bordered hover style={{ width: "98%", marginLeft: "1%" }}>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Duracion</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((el, i) => {
+                  return (
+                    <tr key={el._id}>
+                      <td>{el._id}</td>
+                      <td>{el.name}</td>
+                      <td>{el.expires}</td>
+                      <td>
+                        {/* Button to Delete Item */}
+                        <button
+                          type="button"
+                          className={'btn btn-danger'}
+                          onClick={(e) => removeItem(el._id, el.name)}
+                        >
+                          <BsFillTrashFill />
+                        </button>
+                        {/* Button to Modify Item */}
+                        <button
+                          type="button"
+                          className={'btn btn-info'}
+                          onClick={(e) => modifyItem(el)}
+                        >
+                          <BsGearFill />
+                        </button></td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </Table>
           </div>
         </div>
         <div>

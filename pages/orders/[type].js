@@ -12,7 +12,8 @@ export default function pendingOrders() {
   const { session } = useContext(AuthContext);
   const [items, setItems] = useState([])
   const [totalRecords, setTotalRecords] = useState(1)
-  const [backend, setBackend] = useState('')
+  const [backend, setBackend] = useState('');
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     // const params = new URLSearchParams(window.location.search)
@@ -34,7 +35,7 @@ export default function pendingOrders() {
       }).then((res) => res.json()).then((res) => updateItems(res));
     }
   }, [router.query])
-  
+
   let [filterObject = [...items.reverse()], setFilterObject] = useState();
 
   const updateItems = res => {
@@ -44,7 +45,8 @@ export default function pendingOrders() {
     const backend = res.data.records !== undefined ? 'javascript' : 'python'
     setItems(items);
     setTotalRecords(totalRecords);
-    setBackend(backend)
+    setBackend(backend);
+    setLoaded(true);
   }
 
   const toggle = (id) => {
@@ -85,7 +87,7 @@ export default function pendingOrders() {
           msg: 'Su orden esta lista, por favor pase a retirar su platillo',
           tn
         })
-      }).then((res)=> res.json().then((res)=>console.log(res)))
+      }).then((res) => res.json().then((res) => console.log(res)))
     } else if (router.query.type === 'isReady') {
       fetch(`/api/orders`, {
         method: 'PATCH',
@@ -208,122 +210,131 @@ export default function pendingOrders() {
     }
   };
 
-  return (
-    <div>
-      {/* {console.log(filterObject)} */}
-      <h1>Pedidos en linea</h1>
-      <h2>Backend {backend}</h2>
-      <div className={classes.paginationNav}>
-        <PaginationControls
-          token={session.token}
-          totalRecords={totalRecords}
-          limit={10}
-          sort={null}
-          toUpdateParent={parentItemsUpdate}
-          type={null}
-          url={`/api/orders?status=status&ifValue=${router.query.type}&role=${session.role}&id=${session._id}`}
-          method={session.role === 'admin' ? 'GET' : 'POST' }
-        />
-      </div>
-      {filterObject.map((el, i) => {
-        // console.log(el)
-        if(el.user !== null){
-          return (
-            <div key={el.id}>
-              {sayStatus(el.status)}
-              <div
-                id={`item-${el.id}`}
-                className={`card ${classes.pendingOrderCards}`}
-                onClick={(e) => toggle(el.id)}
-                style={
-                  el.status === 'isReady'
-                    ? { backgroundColor: 'lightgreen' }
-                    : el.status === 'Completed'
-                      ? { backgroundColor: 'lightgray' }
-                      : {}
-                }
-              >
-                <div className={classes.hoverCard}>
-                  <Image
-                    src={`/dishes/stockDishImg.png`}
-                    className={`${classes.pendingOrderCardsImage}`}
-                    alt="me"
-                    width="100"
-                    height="100"
-                  />
-                  <div className={`${classes.pendingOrderCardsBody}`}>
-                    <h5 className={``}>Cliente: <span style={{color: "blue"}}>{el.user.name}</span></h5>
-                    <p className={``}>Total de Platos: {el.totalDishes}</p>
-                    <p className={``}>Hora: {el.dayTime}</p>
-                    <p className={``} style={el.isPaid ? {color: 'green', fontWeight: 'bold', fontSize: '24px'} :{ color: 'red', fontWeight: 'bold', fontSize: '24px'}}>{el.isPaid ? 'Pagado' : 'Pago pendiente'}</p>
-                    <p className={``}>
-                      Fecha {el.day} {el.createdAt}
-                    </p>
+  if (!loaded) {
+    return (
+      <>
+        <div className="d-flex justify-content-center" style={{marginTop: "20%"}}><div className="spinner-border" role="status"><span className="sr-only"></span></div></div>
+      </>
+    )
+  } else {
+    return (
+      <div>
+        {/* {console.log(filterObject)} */}
+        <h1>Pedidos en linea</h1>
+        <h2>Backend {backend}</h2>
+        <div className={classes.paginationNav}>
+          <PaginationControls
+            token={session.token}
+            totalRecords={totalRecords}
+            limit={10}
+            sort={null}
+            toUpdateParent={parentItemsUpdate}
+            type={null}
+            url={`/api/orders?status=status&ifValue=${router.query.type}&role=${session.role}&id=${session._id}`}
+            method={session.role === 'admin' ? 'GET' : 'POST'}
+          />
+        </div>
+        {filterObject.map((el, i) => {
+          // console.log(el)
+          if (el.user !== null) {
+            return (
+              <div key={el.id}>
+                {sayStatus(el.status)}
+                <div
+                  id={`item-${el.id}`}
+                  className={`card ${classes.pendingOrderCards}`}
+                  onClick={(e) => toggle(el.id)}
+                  style={
+                    el.status === 'isReady'
+                      ? { backgroundColor: 'lightgreen' }
+                      : el.status === 'Completed'
+                        ? { backgroundColor: 'lightgray' }
+                        : {}
+                  }
+                >
+                  <div className={classes.hoverCard}>
+                    <Image
+                      src={`/dishes/stockDishImg.png`}
+                      className={`${classes.pendingOrderCardsImage}`}
+                      alt="me"
+                      width="100"
+                      height="100"
+                    />
+                    <div className={`${classes.pendingOrderCardsBody}`}>
+                      <h5 className={``}>Cliente: <span style={{ color: "blue" }}>{el.user.name}</span></h5>
+                      <p className={``}>Total de Platos: {el.totalDishes}</p>
+                      <p className={``}>Hora: {el.dayTime}</p>
+                      <p className={``} style={el.isPaid ? { color: 'green', fontWeight: 'bold', fontSize: '24px' } : { color: 'red', fontWeight: 'bold', fontSize: '24px' }}>{el.isPaid ? 'Pagado' : 'Pago pendiente'}</p>
+                      <p className={``}>
+                        Fecha {el.day} {el.createdAt}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <Collapse
-                id={el.id}
-                isOpen={false}
-                className={classes.collapseCard}
-              >
-                <Card className={classes.collapseInnerCard}>
-                  <CardBody>
-                    {el.dishes !== undefined ? (
-                      el.dishes.map((el, i) => {
-                        return (
-                          <div
-                            className={classes.pendingOrderCardsInnerCard}
-                            key={`inner-${i}`}
-                          >
-                            <Image
-                              src={`/dishes/${el.dish.image}`}
-                              className={`${classes.pendingOrderCardsImage}`}
-                              alt="me"
-                              width="100"
-                              height="100"
-                            />
-                            <div className={`${classes.pendingOrderCardsBody}`}>
-                              <h5 className={``}>
-                                Cantidad de platos: {el.amount}
-                              </h5>
-                              <p className={``}>
-                                Precio unitario: ${el.dish.price}
-                              </p>
-                              <p className={``}>
-                                Precio total del mismo plato: $
-                                {el.dish.price * el.amount}
-                              </p>
+                <Collapse
+                  id={el.id}
+                  isOpen={false}
+                  className={classes.collapseCard}
+                >
+                  <Card className={classes.collapseInnerCard}>
+                    <CardBody>
+                      {el.dishes !== undefined ? (
+                        el.dishes.map((el, i) => {
+                          return (
+                            <div
+                              className={classes.pendingOrderCardsInnerCard}
+                              key={`inner-${i}`}
+                            >
+                              <Image
+                                src={`/dishes/${el.dish.image}`}
+                                className={`${classes.pendingOrderCardsImage}`}
+                                alt="me"
+                                width="100"
+                                height="100"
+                              />
+                              <div className={`${classes.pendingOrderCardsBody}`}>
+                                <h5 className={``}>
+                                  Cantidad de platos: {el.amount}
+                                </h5>
+                                <p className={``}>
+                                  Precio unitario: ${el.dish.price}
+                                </p>
+                                <p className={``}>
+                                  Precio total del mismo plato: $
+                                  {el.dish.price * el.amount}
+                                </p>
+                              </div>
                             </div>
+                          );
+                        })
+                      ) : (
+                        <div
+                          className={classes.pendingOrderCardsInnerCard}
+                          key={`inner-${i}`}
+                        >
+                          <Image
+                            src={`/dishes/stockDishImg.png`}
+                            className={`${classes.pendingOrderCardsImage}`}
+                            alt="me"
+                            width="100"
+                            height="100"
+                          />
+                          <div className={`${classes.pendingOrderCardsBody}`}>
+                            <h2>No hay informacion para mostrar</h2>
                           </div>
-                        );
-                      })
-                    ) : (
-                      <div
-                        className={classes.pendingOrderCardsInnerCard}
-                        key={`inner-${i}`}
-                      >
-                        <Image
-                          src={`/dishes/stockDishImg.png`}
-                          className={`${classes.pendingOrderCardsImage}`}
-                          alt="me"
-                          width="100"
-                          height="100"
-                        />
-                        <div className={`${classes.pendingOrderCardsBody}`}>
-                          <h2>No hay informacion para mostrar</h2>
                         </div>
-                      </div>
-                    )}
-                  </CardBody>
-                </Card>
-              </Collapse>
-              {buttons(el.id, el.status, el.user.tn)}
-            </div>
-          );
-        } else return <></>
-      })}
-      <br />
-    </div>
-  );
+                      )}
+                    </CardBody>
+                  </Card>
+                </Collapse>
+                {buttons(el.id, el.status, el.user.tn)}
+              </div>
+            );
+          } else return <></>
+        })}
+        <br />
+      </div>
+    );
+  }
+
 };

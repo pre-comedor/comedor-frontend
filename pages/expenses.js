@@ -2,7 +2,8 @@ import { useState, useEffect, useContext } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import AuthContext from '../context/authContext';
-import Table from '../components/Table';
+// import Table from '../components/Table';
+import Table from 'react-bootstrap/Table'
 import Link from 'next/link';
 import PaginationControls from '../components/NavigationItems/PaginationControls';
 
@@ -73,7 +74,7 @@ export default function expenses() {
   const addItemHandler = (e, mode) => {
     if (e) e.preventDefault();
 
-    if(metric === '' || amount < 1 || productID === '' || totalPrice <= 0) toast.error('Por favor llene todos los campos')
+    if (metric === '' || amount < 1 || productID === '' || totalPrice <= 0) toast.error('Por favor llene todos los campos')
 
     fetch(`/api/expenses`, {
       method: mode,
@@ -154,7 +155,7 @@ export default function expenses() {
                     onChange={(e) => setProductID(e.target.value)}
                     required
                   >
-                    <option  value=''>
+                    <option value=''>
                       Seleccione un producto
                     </option>
                     {products.map((el) => {
@@ -214,6 +215,7 @@ export default function expenses() {
                   <input
                     type="submit"
                     className="btn btn-outline-primary form-control"
+                    value='Agregar'
                   />
                   <Link href="/" passHref>
                     <button
@@ -241,54 +243,51 @@ export default function expenses() {
               method={'GET'}
             />
           </div>
-          <div className={`${classes.InLineBlock} ${classes.Table2}`}>
-            <Table
-              headers={[
-                'ID',
-                'Producto',
-                'Unidad',
-                'Total',
-                'Precio Unitario',
-                'Precio total',
-                'Fecha',
-              ]}
-              items={items}
-              body={[
-                '_id',
-                'ingredient_name',
-                'metric',
-                'quantity',
-                'pricePerUnit',
-                'totalPrice',
-                'createdAt',
-              ]}
-            />
-          </div>
-          <div className={`${classes.InLineBlock} ${classes.actions2}`}>
-            {items.map((el, i) => {
-              return (
-                <div key={el._id + i}>
-                  {/* Button to Delete Item */}
-                  <button
-                    type="button"
-                    className={'btn btn-danger'}
-                    onClick={(e) => removeItem(el._id, el.name)}
-                  >
-                    <BsFillTrashFill />
-                  </button>
-                  {/* Button to Modify Item */}
-                  <button
-                    type="button"
-                    className={'btn btn-info'}
-                    onClick={(e) => modifyItem(el)}
-                  >
-                    <BsGearFill />
-                  </button>
-                  <br />
-                </div>
-              );
-            })}
-          </div>
+          <Table responsive="lg" striped bordered hover style={{ width: "98%", marginLeft: "1%" }}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Producto</th>
+                <th>Unidad</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Precio total</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((el, i) => {
+                return (
+                  <tr key={el._id}>
+                    <td>{el._id}</td>
+                    <td>{el.product.name}</td>
+                    <td>{el.metric}</td>
+                    <td>{el.quantity}</td>
+                    <td>${el.pricePerUnit}</td>
+                    <td>${el.totalPrice}</td>
+                    <td>{el.createdAt}</td>
+                    <td>{/* Button to Delete Item */}
+                      <button
+                        type="button"
+                        className={'btn btn-danger'}
+                        onClick={(e) => removeItem(el._id, el.product.name)}
+                      >
+                        <BsFillTrashFill />
+                      </button>
+                      {/* Button to Modify Item */}
+                      <button
+                        type="button"
+                        className={'btn btn-info'}
+                        onClick={(e) => modifyItem(el)}
+                      >
+                        <BsGearFill />
+                      </button></td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </Table>
         </div>
         <div>
           <ToastContainer />
