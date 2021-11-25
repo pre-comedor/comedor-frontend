@@ -68,7 +68,7 @@ export default function Menu({ items }) {
           <h2>Actualmente hay {count} clientes en el local</h2>
         </div>
         <br />
-        <Image src={`/logo.jpg`} alt="logo" width="250" height="250" />
+        <img src="https://img.freepik.com/free-vector/letter-s-with-spoon-fork-logo-tableware-logo-fast-food-restaurant-logo_65373-25.jpg?size=338&ext=jpg" alt="logo" width="100px" height="100px" />
         <br />
         <h2>El sabor que nos Caracteriza</h2>
         {SSRElements}
