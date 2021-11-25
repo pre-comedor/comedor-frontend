@@ -51,7 +51,7 @@ export default function Menu({ items }) {
   const SSRElements = (
     <>
       <MenuAdmin
-        title={'Hecho como en Casa'}
+        title={'Elije lo que Mas te Gusta de Nuestro Menu de Hoy'}
         componentName={'Carusel'}
         visible={false}
         Component={<CarousselSSR items={items} />}
