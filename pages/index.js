@@ -70,7 +70,7 @@ export default function Menu({ items }) {
         <br />
         <Image src={`/logo.jpg`} alt="logo" width="250" height="250" />
         <br />
-        <h2>Disfruta de nuestra seleccion de Ayer</h2>
+        <h2>El sabor que nos Caracteriza</h2>
         {SSRElements}
         <Link href="/menu/sell" passHref>
           <a className="btn btn-success" style={{ width: "25vw" }}>Comprar</a>
