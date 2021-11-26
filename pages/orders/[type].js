@@ -40,7 +40,7 @@ export default function pendingOrders() {
 
   const updateItems = res => {
     // console.log(res)
-    const items = res.data.records !== undefined ? res.data.records : res.data
+    const items = res.data.records !== undefined ? res.data.records.reverse() : res.data.reverse()
     const totalRecords = res.data.totalRecords !== undefined ? res.data.totalRecords.length > 0 ? res.data.totalRecords[0].total : 1 : 1
     const backend = res.data.records !== undefined ? 'javascript' : 'python'
     setItems(items);
