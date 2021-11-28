@@ -64,7 +64,7 @@ export default function Menu({ items }) {
       {/* Main section */}
       <section className={`text-center ${classes.section1}`}>
         <div style={{ backgroundColor: '#fcf8f5', width: "50%", height: "20vh", paddingTop: "4vh", marginLeft: "25vw" }}>
-          <h1>Bienvenido a Comedor Buen Amanecer</h1>
+          <h1>Bienvenido a Comedor Buen Amanecer hoy es domingo</h1>
           <h2>Actualmente hay {count} clientes en el local</h2>
         </div>
         <br />
